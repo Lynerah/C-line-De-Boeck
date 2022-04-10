@@ -1,4 +1,4 @@
-const https = require('https');
+const http = require('http');
 const app = require('./app');
 
 const normalizePort = val => {
@@ -12,7 +12,7 @@ const normalizePort = val => {
   }
   return false;
 };
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 const errorHandler = error => {
@@ -35,7 +35,7 @@ const errorHandler = error => {
   }
 };
 
-const server = https.createServer(app);
+const server = http.createServer(app);
 
 server.on('error', errorHandler);
 server.on('listening', () => {
@@ -45,3 +45,4 @@ server.on('listening', () => {
 });
 
 server.listen(port);
+
