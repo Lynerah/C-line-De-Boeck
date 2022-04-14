@@ -1,66 +1,19 @@
 const Sauce = require('../models/Sauce');
 
 exports.createSauce = (req, res, next) => {
-  // const sauce = new Sauce({
-  //   name: req.body.sauce.name,
-  //   description: req.body.description,
-  //   imageUrl: req.body.imageUrl,
-  //   userId: req.body.userId,
-  //   manufacturer: req.body.manufacturer,
-  //   mainPepper: req.body.mainPepper,
-  //   heat:req.body.heat,
-  //   likes: req.body.likes,
-  //   dislikes: req.body.dislikes,
-  // });
-  // console.log(req.body)
-  // sauce.save().then(
-  //   () => {
-  //     res.status(201).json({
-  //       message: 'Post saved successfully!'
-  //     });
-  //   }
-  // ).catch(
-  //   (error) => {
-  //     res.status(400).json({
-  //       error: error
-  //     });
-  //   }
-  // );
-
-    delete req.body._id;
+  const sauceObject = JSON.parse(req.body.sauce);
+    delete sauceObject._id;
     const sauce = new Sauce ({
-    ...req.body
+    ...sauceObject
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
     sauce.save()
     .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
     .catch(error => res.status(400).json({ error }));
 };
 
-// exports.createThing = (req, res, next) => {
-// 	const thingObject = JSON.parse(req.body.sauce);
-// 	const thing = new Thing({
-// 	  ...thingObject,
-// 	  imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-// 	});
-// 	thing.save()
-// 	.then(() => {res.status(201).json({message: "La sauce est enrengistrée !"})})
-// 	.catch(() => {res.status(400).json({message: "La sauce n'a pas pu être enrengistrée"})})
-//   };
 
 exports.getOneSauce = (req, res, next) => {
-  // Sauce.findOne({
-  //   _id: req.params.id
-  // }).then(
-  //   (sauce) => {
-  //     res.status(200).json(sauce);
-  //   }
-  // ).catch(
-  //   (error) => {
-  //     res.status(404).json({
-  //       error: error
-  //     });
-  //   }
-  // );
   
   Sauce.findOne({ _id: req.params.id })
   .then(sauce => res.status(200).json(sauce))
@@ -68,29 +21,12 @@ exports.getOneSauce = (req, res, next) => {
 };
 
 exports.modifySauce = (req, res, next) => {
-  // const sauce = new Sauce({
-  //   _id: req.params.id,
-  //   title: req.body.title,
-  //   description: req.body.description,
-  //   imageUrl: req.body.imageUrl,
-  //   price: req.body.price,
-  //   userId: req.body.userId
-  // });
-  // Thing.updateOne({_id: req.params.id}, sauce).then(
-  //   () => {
-  //     res.status(201).json({
-  //       message: 'Sauce updated successfully!'
-  //     });
-  //   }
-  // ).catch(
-  //   (error) => {
-  //     res.status(400).json({
-  //       error: error
-  //     });
-  //   }
-  // );
- 
-    Sauce.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+  const sauceObject = req.file ?
+    {
+      ...JSON.parse(req.body.sauce),
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    } : {...req.body};
+    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: 'Objet modifié !'}))
     .catch(error => res.status(400).json({ error }));
 
